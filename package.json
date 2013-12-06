@@ -1,0 +1,29 @@
+{
+	"name" : "pg-sync",
+	"version" : "0.0.1",
+	"description" : "Synchronous, blocking PostgreSQL client (libpq binding).",
+	"keywords" : [
+		"postgres",
+		"libpq",
+		"synchronous",
+		"database",
+		"rdbms",
+		"transaction"
+	],
+	"homepage" : "https://github.com/RayKitajima/pg-sync",
+	"repository" : {
+		"type" : "git",
+		"url"  : "git://github.com/RayKitajima/pg-sync.git"
+	},
+	"author" : {
+		"name" : "Rei Kitajima",
+		"email" : "rei.kitajima@gmail.com>"
+	},
+	"main" : "./lib",
+	"dependencies" : {},
+	"scripts" : { 
+		"prepublish" : "rm -r build || (exit 0)",
+		"install"    : "node-gyp rebuild || (exit 0)"
+	},
+	"engines" : { "node": ">= 0.8.0" }
+}
