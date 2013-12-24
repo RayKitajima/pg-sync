@@ -35,6 +35,9 @@ private:
 	static Handle<Value> Connect(const Arguments& args);
 	static Handle<Value> Disconnect(const Arguments& args);
 	
+	static Handle<Value> EscapeLiteral(const Arguments& args);
+	static Handle<Value> EscapeIdentifier(const Arguments& args);
+	
 	static Handle<Value> ExecCommand(const Arguments& args);
 	static Handle<Value> ExecQuery(const Arguments& args);
 	static Handle<Value> ExecQueryWithParams(const Arguments& args);
