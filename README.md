@@ -7,9 +7,9 @@ Synchronous, blocking libpq binding (PostgreSQL client) for node.js, based on Br
 
 This module requires libpq in your system.
 
-	wget http://ftp.postgresql.org/pub/source/<version>/postgresql-<version>.tar.gz
-	tar zxvf postgresql-<version>.tar.gz
-	cd postgresql-<version>
+	wget http://ftp.postgresql.org/pub/source/<version>/postgresql-<version9>.tar.gz
+	tar zxvf postgresql-<version9>.tar.gz
+	cd postgresql-<version9>
 	./configure --prefix=/path/to/pgsql
 	make
 	make install
@@ -64,7 +64,7 @@ Copyright (c) 2013 Rei Kitajima (rei.kitajima@gmail.com)
 
 MIT License
 
-Javascript part of this product is almost based on Brian Carlson's node-postgres.
+This product is almost based on Brian Carlson's node-postgres.
 
 Copyright (c) 2010 Brian Carlson (brian.m.carlson@gmail.com)
 

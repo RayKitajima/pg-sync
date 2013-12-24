@@ -42,6 +42,11 @@ void Connection::Init(Handle<Object> target)
 	);
 	
 	tpl->PrototypeTemplate()->Set(
+		String::NewSymbol("escapeStringConn"),
+		FunctionTemplate::New(EscapeStringConn)->GetFunction()
+	);
+	
+	tpl->PrototypeTemplate()->Set(
 		String::NewSymbol("execCommand"),
 		FunctionTemplate::New(ExecCommand)->GetFunction()
 	);
@@ -138,7 +143,8 @@ Handle<Value> Connection::EscapeLiteral(const Arguments& args)
 	// simply returns result status
 	Handle<String> response = String::New(safeStr);
 	
-	PQfreemem(unsafeStr);
+	free(safeStr);
+	free(unsafeStr);
 	
 	return scope.Close(response);
 }
@@ -160,7 +166,33 @@ Handle<Value> Connection::EscapeIdentifier(const Arguments& args)
 	
 	Handle<String> response = String::New(safeStr);
 	
-	PQfreemem(unsafeStr);
+	free(safeStr);
+	free(unsafeStr);
+	
+	return scope.Close(response);
+}
+
+//v8 entry point into Connection#escapeStringConn
+Handle<Value> Connection::EscapeStringConn(const Arguments& args)
+{
+	HandleScope scope;
+	Connection *self = ObjectWrap::Unwrap<Connection>(args.This());
+	
+	if( !args[0]->IsString() ){
+		return Undefined();
+	}
+	
+	char* unsafeStr = MallocCString(args[0]);
+	char* safeStr = (char *) malloc(strlen(unsafeStr)*2+1);
+	int error;
+	
+	// call libpq
+	size_t safeStr_length = PQescapeStringConn(self->connection_, safeStr, unsafeStr, strlen(unsafeStr), &error);
+	
+	Handle<String> response = String::New(safeStr,safeStr_length);
+	
+	free(safeStr);
+	free(unsafeStr);
 	
 	return scope.Close(response);
 }

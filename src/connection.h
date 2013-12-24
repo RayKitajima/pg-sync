@@ -37,6 +37,7 @@ private:
 	
 	static Handle<Value> EscapeLiteral(const Arguments& args);
 	static Handle<Value> EscapeIdentifier(const Arguments& args);
+	static Handle<Value> EscapeStringConn(const Arguments& args);
 	
 	static Handle<Value> ExecCommand(const Arguments& args);
 	static Handle<Value> ExecQuery(const Arguments& args);
