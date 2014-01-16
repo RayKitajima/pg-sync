@@ -34,9 +34,8 @@ console.log(res);
 
 console.log("---");
 console.log("auto commit mode:");
-client.setAutoCommit();
+client.setAutoCommit('on');
 
-console.log("---");
 console.log("inserting new row:");
 res = client.query("insert into product values ( 6, 'Product_6', 530 )");
 console.log(res);
@@ -53,7 +52,6 @@ console.log("check the row:");
 res = client.query("select * from product where id=6");
 console.log(res);
 
-console.log("---");
 console.log("new id");
 res = client.query("select nextval('productSeq')");
 console.log(res);
@@ -62,6 +60,10 @@ var newid = res[0].nextval;
 console.log("inserting new row with prepared statement:");
 var stm = client.prepare("insert into product values ( $1, $2, $3 )");
 res = stm.execute([newid,'Product_new',330]);
+console.log(res);
+
+console.log("check the row:");
+res = client.query("select * from product where id=$1",[newid]);
 console.log(res);
 
 console.log("---");

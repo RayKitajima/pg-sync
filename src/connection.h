@@ -1,9 +1,7 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
-#include <node.h>
-#include <v8.h>
-#include <node_buffer.h>
+#include <nan.h>
 #include <libpq-fe.h>
 #include <string.h>
 #include <stdlib.h>
@@ -24,29 +22,28 @@ public:
 	bool Connect(const char* conninfo);
 	void Disconnect();
 	
-private:
+protected:
 	
 	PGconn *connection_;
 	
 	Connection();
 	~Connection();
 	
-	static Handle<Value> New(const v8::Arguments& args);
-	static Handle<Value> Connect(const Arguments& args);
-	static Handle<Value> Disconnect(const Arguments& args);
+	static NAN_METHOD(New);
+	static NAN_METHOD(Connect);
+	static NAN_METHOD(Disconnect);
 	
-	static Handle<Value> EscapeLiteral(const Arguments& args);
-	static Handle<Value> EscapeIdentifier(const Arguments& args);
-	static Handle<Value> EscapeStringConn(const Arguments& args);
+	static NAN_METHOD(EscapeLiteral);
+	static NAN_METHOD(EscapeIdentifier);
+	static NAN_METHOD(EscapeStringConn);
 	
-	static Handle<Value> ExecCommand(const Arguments& args);
-	static Handle<Value> ExecQuery(const Arguments& args);
-	static Handle<Value> ExecQueryWithParams(const Arguments& args);
-	static Handle<Value> ExecPrepare(const Arguments& args);
-	static Handle<Value> ExecQueryPrepared(const Arguments& args);
+	static NAN_METHOD(ExecCommand);
+	static NAN_METHOD(ExecQuery);
+	static NAN_METHOD(ExecQueryWithParams);
+	static NAN_METHOD(ExecPrepare);
+	static NAN_METHOD(ExecQueryPrepared);
 	
-	static Handle<Value> DispatchParameterizedQuery(const Arguments& args, bool isPrepared);
-	
+	static Handle<Value> DispatchParameterizedQuery(_NAN_METHOD_ARGS, bool isPrepared);
 	static Handle<Array> HandleTuplesResult(const PGresult* result);
 	
 	static char** ArgToCStringArray(Local<Array> params);

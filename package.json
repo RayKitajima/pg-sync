@@ -1,6 +1,6 @@
 {
 	"name" : "pg-sync",
-	"version" : "0.0.3",
+	"version" : "0.1.0",
 	"description" : "Synchronous, blocking PostgreSQL client (libpq binding).",
 	"keywords" : [
 		"postgres",
@@ -20,7 +20,9 @@
 		"email" : "rei.kitajima@gmail.com>"
 	},
 	"main" : "./lib",
-	"dependencies" : {},
+	"dependencies" : {
+		"nan" : "~0.8.0"
+	},
 	"scripts" : { 
 		"prepublish" : "rm -r build || (exit 0)",
 		"install"    : "node-gyp rebuild || (exit 0)"

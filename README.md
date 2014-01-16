@@ -50,7 +50,7 @@ client.disconnect();
 
 ## Note
 
-Still only for node 0.8.*.
+Node 0.8, 0.10, 0.11+ supported.
 
 This module does not support copy command.
 
@@ -64,7 +64,7 @@ Copyright (c) 2013 Rei Kitajima (rei.kitajima@gmail.com)
 
 MIT License
 
-This product is almost based on Brian Carlson's node-postgres.
+This product is almost based on Brian Carlson's [node-postgres](https://github.com/brianc/node-postgres).
 
 Copyright (c) 2010 Brian Carlson (brian.m.carlson@gmail.com)
 

@@ -40,13 +40,13 @@ console.log(res);
 
 // text
 console.log("---");
-console.log("selectby price:");
+console.log("selectby name:");
 res = client.query("select * from product where name like $1",['%_3%']);
 console.log(res);
 
 // date
 console.log("---");
-console.log("selectby price:");
+console.log("selectby date:");
 res = client.query("select * from \"order\" where date > $1",['2013-02-22']);
 console.log(res);
 

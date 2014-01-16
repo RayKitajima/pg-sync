@@ -1,7 +1,5 @@
-
+#include <nan.h>
 #include <libpq-fe.h>
-#include <node.h>
-#include <node_buffer.h>
 #include <string.h>
 #include <assert.h>
 #include <stdlib.h>
@@ -16,123 +14,121 @@ Connection::~Connection() {};
 //v8 object initializer
 void Connection::Init(Handle<Object> target)
 {
+	NanScope();
+	
 	Local<FunctionTemplate> tpl = FunctionTemplate::New(New);
 	
-	tpl->SetClassName(String::NewSymbol("Connection"));
+	tpl->SetClassName(NanSymbol("Connection"));
 	tpl->InstanceTemplate()->SetInternalFieldCount(1);
 	
 	tpl->PrototypeTemplate()->Set(
-		String::NewSymbol("Connection"),
+		NanSymbol("Connection"),
 		FunctionTemplate::New(New)->GetFunction()
 	);
 	
 	tpl->PrototypeTemplate()->Set(
-		String::NewSymbol("connect"),
+		NanSymbol("connect"),
 		FunctionTemplate::New(Connect)->GetFunction()
 	);
 	
 	tpl->PrototypeTemplate()->Set(
-		String::NewSymbol("escapeLiteral"),
+		NanSymbol("escapeLiteral"),
 		FunctionTemplate::New(EscapeLiteral)->GetFunction()
 	);
 	
 	tpl->PrototypeTemplate()->Set(
-		String::NewSymbol("escapeIdentifier"),
+		NanSymbol("escapeIdentifier"),
 		FunctionTemplate::New(EscapeIdentifier)->GetFunction()
 	);
 	
 	tpl->PrototypeTemplate()->Set(
-		String::NewSymbol("escapeStringConn"),
+		NanSymbol("escapeStringConn"),
 		FunctionTemplate::New(EscapeStringConn)->GetFunction()
 	);
 	
 	tpl->PrototypeTemplate()->Set(
-		String::NewSymbol("execCommand"),
+		NanSymbol("execCommand"),
 		FunctionTemplate::New(ExecCommand)->GetFunction()
 	);
 	
 	tpl->PrototypeTemplate()->Set(
-		String::NewSymbol("execQuery"),
+		NanSymbol("execQuery"),
 		FunctionTemplate::New(ExecQuery)->GetFunction()
 	);
 	
 	tpl->PrototypeTemplate()->Set(
-		String::NewSymbol("execQueryWithParams"),
+		NanSymbol("execQueryWithParams"),
 		FunctionTemplate::New(ExecQueryWithParams)->GetFunction()
 	);
 	
 	tpl->PrototypeTemplate()->Set(
-		String::NewSymbol("execPrepare"),
+		NanSymbol("execPrepare"),
 		FunctionTemplate::New(ExecPrepare)->GetFunction()
 	);
 	
 	tpl->PrototypeTemplate()->Set(
-		String::NewSymbol("execQueryPrepared"),
+		NanSymbol("execQueryPrepared"),
 		FunctionTemplate::New(ExecQueryPrepared)->GetFunction()
 	);
 	
 	tpl->PrototypeTemplate()->Set(
-		String::NewSymbol("disconnect"),
+		NanSymbol("disconnect"),
 		FunctionTemplate::New(Disconnect)->GetFunction()
 	);
 	
-	Persistent<Function> constructor = Persistent<Function>::New(tpl->GetFunction());
-	target->Set(String::NewSymbol("Connection"), constructor);
+	target->Set(NanSymbol("Connection"), tpl->GetFunction());
 }
 
 //v8 entry point to constructor
-Handle<Value> Connection::New(const Arguments& args)
+NAN_METHOD(Connection::New)
 {
-	HandleScope scope;
+	NanScope();
 	
 	Connection *connection = new Connection();
 	connection->Wrap(args.This());
 	
-	return args.This();
+	NanReturnValue(args.This());
 }
 
 //v8 entry point into Connection#connect
-Handle<Value> Connection::Connect(const Arguments& args)
+NAN_METHOD(Connection::Connect)
 {
-	HandleScope scope;
+	NanScope();
 	Connection *self = ObjectWrap::Unwrap<Connection>(args.This());
 	
 	if(args.Length() == 0 || !args[0]->IsString()) {
-		THROW("Must include connection string as only argument to connect");
+		NanThrowError("Must include connection string as only argument to connect");
 	}
 	
 	String::Utf8Value conninfo(args[0]->ToString());
 	bool success = self->Connect(*conninfo);
 	if(!success) {
-		THROW("Can not make connection");
+		NanThrowError("Can not make connection");
 		self->Disconnect();
 	}
 	
-	return Undefined();
+	NanReturnUndefined();
 }
 
 //v8 entry point into Connection#disconnect
-Handle<Value> Connection::Disconnect(const Arguments& args)
+NAN_METHOD(Connection::Disconnect)
 {
-	HandleScope scope;
+	NanScope();
 	Connection *self = ObjectWrap::Unwrap<Connection>(args.This());
 	
 	self->Disconnect();
 	
-	return Undefined();
+	NanReturnUndefined();
 }
 
-
-// *   *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    * 
-
 //v8 entry point into Connection#escapeLiteral
-Handle<Value> Connection::EscapeLiteral(const Arguments& args)
+NAN_METHOD(Connection::EscapeLiteral)
 {
-	HandleScope scope;
+	NanScope();
 	Connection *self = ObjectWrap::Unwrap<Connection>(args.This());
 	
 	if( !args[0]->IsString() ){
-		return Undefined();
+		NanReturnUndefined();
 	}
 	
 	char* unsafeStr = MallocCString(args[0]);
@@ -146,17 +142,17 @@ Handle<Value> Connection::EscapeLiteral(const Arguments& args)
 	free(safeStr);
 	free(unsafeStr);
 	
-	return scope.Close(response);
+	NanReturnValue(response);
 }
 
 //v8 entry point into Connection#escapeIdentifier
-Handle<Value> Connection::EscapeIdentifier(const Arguments& args)
+NAN_METHOD(Connection::EscapeIdentifier)
 {
-	HandleScope scope;
+	NanScope();
 	Connection *self = ObjectWrap::Unwrap<Connection>(args.This());
 	
 	if( !args[0]->IsString() ){
-		return Undefined();
+		NanReturnUndefined();
 	}
 	
 	char* unsafeStr = MallocCString(args[0]);
@@ -169,17 +165,17 @@ Handle<Value> Connection::EscapeIdentifier(const Arguments& args)
 	free(safeStr);
 	free(unsafeStr);
 	
-	return scope.Close(response);
+	NanReturnValue(response);
 }
 
 //v8 entry point into Connection#escapeStringConn
-Handle<Value> Connection::EscapeStringConn(const Arguments& args)
+NAN_METHOD(Connection::EscapeStringConn)
 {
-	HandleScope scope;
+	NanScope();
 	Connection *self = ObjectWrap::Unwrap<Connection>(args.This());
 	
 	if( !args[0]->IsString() ){
-		return Undefined();
+		NanReturnUndefined();
 	}
 	
 	char* unsafeStr = MallocCString(args[0]);
@@ -194,17 +190,17 @@ Handle<Value> Connection::EscapeStringConn(const Arguments& args)
 	free(safeStr);
 	free(unsafeStr);
 	
-	return scope.Close(response);
+	NanReturnValue(response);
 }
 
 //v8 entry point into Connection#execCommand
-Handle<Value> Connection::ExecCommand(const Arguments& args)
+NAN_METHOD(Connection::ExecCommand)
 {
-	HandleScope scope;
+	NanScope();
 	Connection *self = ObjectWrap::Unwrap<Connection>(args.This());
 	
 	if( !args[0]->IsString() ){
-		THROW("First parameter must be a string query");
+		NanThrowError("First parameter must be a string query");
 	}
 	
 	char* queryText = MallocCString(args[0]);
@@ -215,22 +211,22 @@ Handle<Value> Connection::ExecCommand(const Arguments& args)
 	// simply returns result status
 	Local<Object> response = Object::New();
 	char* status = PQresStatus(PQresultStatus(result));
-	response->Set(NODE_PSYMBOL("status"), String::New(status));
+	response->Set(NanSymbol("status"), String::New(status));
 	
 	PQclear(result);
 	free(queryText);
 	
-	return scope.Close(response);
+	NanReturnValue(response);
 }
 
 //v8 entry point into Connection#execQuery
-Handle<Value> Connection::ExecQuery(const Arguments& args)
+NAN_METHOD(Connection::ExecQuery)
 {
-	HandleScope scope;
+	NanScope();
 	Connection *self = ObjectWrap::Unwrap<Connection>(args.This());
 	
 	if( !args[0]->IsString() ){
-		THROW("First parameter must be a string query");
+		NanThrowError("First parameter must be a string query");
 	}
 	
 	char* queryText = MallocCString(args[0]);
@@ -241,7 +237,7 @@ Handle<Value> Connection::ExecQuery(const Arguments& args)
 	// check result
 	if( (PQresultStatus(result) != PGRES_COMMAND_OK) && (PQresultStatus(result) != PGRES_TUPLES_OK) ){
 		LOG(PQresStatus(PQresultStatus(result)));
-		THROW("Can not execute query");
+		NanThrowError("Can not execute query");
 	}
 	
 	// PGresult to JavaScript object
@@ -250,15 +246,15 @@ Handle<Value> Connection::ExecQuery(const Arguments& args)
 	PQclear(result);
 	free(queryText);
 	
-	return scope.Close(response);
+	NanReturnValue(response);
 }
 
 //v8 entry point into Connection#execQueryWithParams
-Handle<Value> Connection::ExecQueryWithParams(const Arguments& args)
+NAN_METHOD(Connection::ExecQueryWithParams)
 {
-	HandleScope scope;
+	NanScope();
 	//dispatch non-prepared parameterized query
-	return DispatchParameterizedQuery(args, false);
+	NanReturnValue(DispatchParameterizedQuery(args,false));
 }
 
 //v8 entry point into Connection#execPrepare(string queryName, string queryText, int nParams)
@@ -266,9 +262,9 @@ Handle<Value> Connection::ExecQueryWithParams(const Arguments& args)
 //usage:
 //  var res = con.execPrepare("s","select * from product where id=$1",1);
 //  
-Handle<Value> Connection::ExecPrepare(const Arguments& args)
+NAN_METHOD(Connection::ExecPrepare)
 {
-	HandleScope scope;
+	NanScope();
 	
 	Connection *self = ObjectWrap::Unwrap<Connection>(args.This());
 	
@@ -283,13 +279,13 @@ Handle<Value> Connection::ExecPrepare(const Arguments& args)
 	// check result
 	if( PQresultStatus(result) != PGRES_COMMAND_OK ){
 		LOG(PQresStatus(PQresultStatus(result)));
-		THROW("Can not execute prepare");
+		NanThrowError("Can not execute prepare");
 	}
 	
 	free(queryName);
 	free(queryText);
 	
-	return Undefined();
+	NanReturnUndefined();
 }
 
 //v8 entry point into Connection#execQueryPrepared(string queryName, string[] paramValues)
@@ -297,26 +293,26 @@ Handle<Value> Connection::ExecPrepare(const Arguments& args)
 //usage: parameter should be string
 //  var res = con.execQueryPrepared("s",["1"]);
 //  
-Handle<Value> Connection::ExecQueryPrepared(const Arguments& args)
+NAN_METHOD(Connection::ExecQueryPrepared)
 {
-	HandleScope scope;
+	NanScope();
 	//dispatch prepared parameterized query
-	return DispatchParameterizedQuery(args, true);
+	NanReturnValue(DispatchParameterizedQuery(args,true));
 }
 
-Handle<Value> Connection::DispatchParameterizedQuery(const Arguments& args, bool isPrepared)
+Handle<Value> Connection::DispatchParameterizedQuery(_NAN_METHOD_ARGS, bool isPrepared)
 {
-	HandleScope scope;
+	NanScope();
 	Connection *self = ObjectWrap::Unwrap<Connection>(args.This());
 	
 	String::Utf8Value queryName(args[0]);
 	
 	if(!args[0]->IsString()) {
-		THROW("First parameter must be a string");
+		NanThrowError("First parameter must be a string");
 	}
 	
 	if(!args[1]->IsArray()) {
-		THROW("Values must be an array");
+		NanThrowError("Values must be an array");
 	}
 	
 	Local<Array> jsParams = Local<Array>::Cast(args[1]);
@@ -324,7 +320,7 @@ Handle<Value> Connection::DispatchParameterizedQuery(const Arguments& args, bool
 	
 	char** paramValues = ArgToCStringArray(jsParams);
 	if(!paramValues) {
-		THROW("Unable to allocate char **paramValues from Local<Array> of v8 params");
+		NanThrowError("Unable to allocate char **paramValues from Local<Array> of v8 params");
 	}
 	
 	char* queryText = MallocCString(args[0]);
@@ -340,7 +336,7 @@ Handle<Value> Connection::DispatchParameterizedQuery(const Arguments& args, bool
 	// check result
 	if( (PQresultStatus(result) != PGRES_COMMAND_OK) && (PQresultStatus(result) != PGRES_TUPLES_OK) ){
 		LOG(PQresStatus(PQresultStatus(result)));
-		THROW("Can not execute parametarized query");
+		NanThrowError("Can not execute parametarized query");
 	}
 	
 	// PGresult to JavaScript object
@@ -350,6 +346,7 @@ Handle<Value> Connection::DispatchParameterizedQuery(const Arguments& args, bool
 	free(queryText);
 	
 	return scope.Close(response);
+	//return response;
 }
 
 
@@ -386,7 +383,7 @@ void Connection::Disconnect()
 //maps the postgres tuple results to v8 objects
 Handle<Array> Connection::HandleTuplesResult(const PGresult* result)
 {
-	HandleScope scope;
+	NanScope();
 	int rowCount = PQntuples(result);
 	Local<Array> rows = Array::New();
 	for(int rowNumber = 0; rowNumber < rowCount; rowNumber++) {
@@ -397,24 +394,25 @@ Handle<Array> Connection::HandleTuplesResult(const PGresult* result)
 			Local<Object> field = Object::New();
 			//name of field
 			char* fieldName = PQfname(result, fieldNumber);
-			field->Set(NODE_PSYMBOL("name"), String::New(fieldName));
+			field->Set(NanSymbol("name"), String::New(fieldName));
 			
 			//oid of type of field
 			int fieldType = PQftype(result, fieldNumber);
-			field->Set(NODE_PSYMBOL("type"), Integer::New(fieldType));
+			field->Set(NanSymbol("type"), Integer::New(fieldType));
 			
 			//value of field
 			if(PQgetisnull(result, rowNumber, fieldNumber)) {
-				field->Set(NODE_PSYMBOL("value"), Null());
+				field->Set(NanSymbol("value"), Null());
 			} else {
 				char* fieldValue = PQgetvalue(result, rowNumber, fieldNumber);
-				field->Set(NODE_PSYMBOL("value"), String::New(fieldValue));
+				field->Set(NanSymbol("value"), String::New(fieldValue));
 			}
 			row->Set(Integer::New(fieldNumber), field);
 		}
 		rows->Set(Integer::New(rowNumber),row);
 	}
 	return scope.Close(rows);
+	//return rows;
 }
 
 //Converts a v8 array to an array of cstrings
