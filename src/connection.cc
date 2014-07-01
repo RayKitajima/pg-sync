@@ -16,67 +16,67 @@ void Connection::Init(Handle<Object> target)
 {
 	NanScope();
 	
-	Local<FunctionTemplate> tpl = FunctionTemplate::New(New);
+	Local<FunctionTemplate> tpl = NanNew<FunctionTemplate>(New);
 	
-	tpl->SetClassName(NanSymbol("Connection"));
+	tpl->SetClassName(NanNew<String>("Connection"));
 	tpl->InstanceTemplate()->SetInternalFieldCount(1);
 	
 	tpl->PrototypeTemplate()->Set(
-		NanSymbol("Connection"),
-		FunctionTemplate::New(New)->GetFunction()
+		NanNew<String>("Connection"),
+		NanNew<FunctionTemplate>(New)->GetFunction()
 	);
 	
 	tpl->PrototypeTemplate()->Set(
-		NanSymbol("connect"),
-		FunctionTemplate::New(Connect)->GetFunction()
+		NanNew<String>("connect"),
+		NanNew<FunctionTemplate>(Connect)->GetFunction()
 	);
 	
 	tpl->PrototypeTemplate()->Set(
-		NanSymbol("escapeLiteral"),
-		FunctionTemplate::New(EscapeLiteral)->GetFunction()
+		NanNew<String>("escapeLiteral"),
+		NanNew<FunctionTemplate>(EscapeLiteral)->GetFunction()
 	);
 	
 	tpl->PrototypeTemplate()->Set(
-		NanSymbol("escapeIdentifier"),
-		FunctionTemplate::New(EscapeIdentifier)->GetFunction()
+		NanNew<String>("escapeIdentifier"),
+		NanNew<FunctionTemplate>(EscapeIdentifier)->GetFunction()
 	);
 	
 	tpl->PrototypeTemplate()->Set(
-		NanSymbol("escapeStringConn"),
-		FunctionTemplate::New(EscapeStringConn)->GetFunction()
+		NanNew<String>("escapeStringConn"),
+		NanNew<FunctionTemplate>(EscapeStringConn)->GetFunction()
 	);
 	
 	tpl->PrototypeTemplate()->Set(
-		NanSymbol("execCommand"),
-		FunctionTemplate::New(ExecCommand)->GetFunction()
+		NanNew<String>("execCommand"),
+		NanNew<FunctionTemplate>(ExecCommand)->GetFunction()
 	);
 	
 	tpl->PrototypeTemplate()->Set(
-		NanSymbol("execQuery"),
-		FunctionTemplate::New(ExecQuery)->GetFunction()
+		NanNew<String>("execQuery"),
+		NanNew<FunctionTemplate>(ExecQuery)->GetFunction()
 	);
 	
 	tpl->PrototypeTemplate()->Set(
-		NanSymbol("execQueryWithParams"),
-		FunctionTemplate::New(ExecQueryWithParams)->GetFunction()
+		NanNew<String>("execQueryWithParams"),
+		NanNew<FunctionTemplate>(ExecQueryWithParams)->GetFunction()
 	);
 	
 	tpl->PrototypeTemplate()->Set(
-		NanSymbol("execPrepare"),
-		FunctionTemplate::New(ExecPrepare)->GetFunction()
+		NanNew<String>("execPrepare"),
+		NanNew<FunctionTemplate>(ExecPrepare)->GetFunction()
 	);
 	
 	tpl->PrototypeTemplate()->Set(
-		NanSymbol("execQueryPrepared"),
-		FunctionTemplate::New(ExecQueryPrepared)->GetFunction()
+		NanNew<String>("execQueryPrepared"),
+		NanNew<FunctionTemplate>(ExecQueryPrepared)->GetFunction()
 	);
 	
 	tpl->PrototypeTemplate()->Set(
-		NanSymbol("disconnect"),
-		FunctionTemplate::New(Disconnect)->GetFunction()
+		NanNew<String>("disconnect"),
+		NanNew<FunctionTemplate>(Disconnect)->GetFunction()
 	);
 	
-	target->Set(NanSymbol("Connection"), tpl->GetFunction());
+	target->Set(NanNew<String>("Connection"), tpl->GetFunction());
 }
 
 //v8 entry point to constructor
@@ -211,7 +211,7 @@ NAN_METHOD(Connection::ExecCommand)
 	// simply returns result status
 	Local<Object> response = Object::New();
 	char* status = PQresStatus(PQresultStatus(result));
-	response->Set(NanSymbol("status"), String::New(status));
+	response->Set(NanNew<String>("status"), String::New(status));
 	
 	PQclear(result);
 	free(queryText);
@@ -394,18 +394,18 @@ Handle<Array> Connection::HandleTuplesResult(const PGresult* result)
 			Local<Object> field = Object::New();
 			//name of field
 			char* fieldName = PQfname(result, fieldNumber);
-			field->Set(NanSymbol("name"), String::New(fieldName));
+			field->Set(NanNew<String>("name"), String::New(fieldName));
 			
 			//oid of type of field
 			int fieldType = PQftype(result, fieldNumber);
-			field->Set(NanSymbol("type"), Integer::New(fieldType));
+			field->Set(NanNew<String>("type"), Integer::New(fieldType));
 			
 			//value of field
 			if(PQgetisnull(result, rowNumber, fieldNumber)) {
-				field->Set(NanSymbol("value"), Null());
+				field->Set(NanNew<String>("value"), Null());
 			} else {
 				char* fieldValue = PQgetvalue(result, rowNumber, fieldNumber);
-				field->Set(NanSymbol("value"), String::New(fieldValue));
+				field->Set(NanNew<String>("value"), String::New(fieldValue));
 			}
 			row->Set(Integer::New(fieldNumber), field);
 		}

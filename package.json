@@ -1,6 +1,6 @@
 {
 	"name" : "pg-sync",
-	"version" : "0.1.0",
+	"version" : "0.1.1",
 	"description" : "Synchronous, blocking PostgreSQL client (libpq binding).",
 	"keywords" : [
 		"postgres",
@@ -21,7 +21,7 @@
 	},
 	"main" : "./lib",
 	"dependencies" : {
-		"nan" : "~0.8.0"
+		"nan" : "~1.2.0"
 	},
 	"scripts" : { 
 		"prepublish" : "rm -r build || (exit 0)",

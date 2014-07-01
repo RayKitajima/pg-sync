@@ -7,9 +7,9 @@
 
 using namespace v8;
 
-void Init(Handle<Object> target) {
+void InitAll(Handle<Object> target) {
 	Connection::Init(target);
 }
 
-NODE_MODULE(pgsync, Init)
+NODE_MODULE(pgsync, InitAll)
 
