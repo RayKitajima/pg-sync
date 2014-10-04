@@ -365,7 +365,6 @@ bool Connection::Connect(const char* conninfo)
 	
 	if ( PQstatus(connection_) != CONNECTION_OK ) {
 		LOG("Unable to set connection");
-		PQfinish(connection_);
 		return false;
 	}
 	
