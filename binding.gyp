@@ -10,7 +10,13 @@
 				'<!@(pg_config --includedir)',
 				'<!(node -e "require(\'nan\')")'
 			],
-			'libraries' : ['-lpq -L<!@(pg_config --libdir)']
+			'conditions': [
+				['OS=="win"', {
+					'libraries': ['<!@(pg_config --libdir)\\libpq']
+				} ,{
+					'libraries': ['-lpq -L<!@(pg_config --libdir)']
+				}]
+			]
 		}
 	]
 }

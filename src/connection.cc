@@ -212,6 +212,10 @@ NAN_METHOD(Connection::ExecCommand)
 	Local<Object> response = Object::New();
 	char* status = PQresStatus(PQresultStatus(result));
 	response->Set(NanNew<String>("status"), String::New(status));
+    if( (PQresultStatus(result) != PGRES_COMMAND_OK) && (PQresultStatus(result) != PGRES_TUPLES_OK) ){
+        char* errorMessage = PQresultErrorMessage(result);
+        response->Set(NanNew<String>("errorMessage"), String::New(errorMessage));
+    }
 	
 	PQclear(result);
 	free(queryText);
@@ -237,7 +241,8 @@ NAN_METHOD(Connection::ExecQuery)
 	// check result
 	if( (PQresultStatus(result) != PGRES_COMMAND_OK) && (PQresultStatus(result) != PGRES_TUPLES_OK) ){
 		LOG(PQresStatus(PQresultStatus(result)));
-		NanThrowError("Can not execute query");
+        char* errorMessage = PQresultErrorMessage(result);
+		NanThrowError(errorMessage);
 	}
 	
 	// PGresult to JavaScript object
@@ -360,7 +365,6 @@ bool Connection::Connect(const char* conninfo)
 	
 	if ( PQstatus(connection_) != CONNECTION_OK ) {
 		LOG("Unable to set connection");
-		PQfinish(connection_);
 		return false;
 	}
 	
