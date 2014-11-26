@@ -22,12 +22,12 @@ This module requires libpq in your system.
 
 ```javascript
 var pgsync = require('pg-sync');
-var client = pgsync.Client();
+var client = new pgsync.Client();
 
 client.connect("host=127.0.0.1 port=5432 dbname=mydb");
 
 client.begin();
-client.setIsolationLebelSerializable();
+client.setIsolationLevelSerializable();
 
 var result = client.query(queryText);
 var result = client.query(queryText,[params]);
