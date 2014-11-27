@@ -69,7 +69,7 @@ console.log(res);
 console.log("---");
 console.log("transaction:");
 client.begin();
-client.setIsolationLebelSerializable();
+client.setIsolationLevelSerializable();
 
 console.log("inserting volatile row:");
 res = client.query("insert into product values ( 10, 'Product_10', 800 )");
