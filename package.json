@@ -21,7 +21,7 @@
 	},
 	"main" : "./lib",
 	"dependencies" : {
-		"nan" : "~1.2.0"
+		"nan" : "~1.6.0"
 	},
 	"scripts" : { 
 		"prepublish" : "rm -r build || (exit 0)",

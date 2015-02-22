@@ -137,7 +137,7 @@ NAN_METHOD(Connection::EscapeLiteral)
 	char *safeStr = PQescapeLiteral(self->connection_, unsafeStr, strlen(unsafeStr));
 	
 	// simply returns result status
-	Handle<String> response = String::New(safeStr);
+	Handle<String> response =  NanNew<String>(safeStr);
 	
 	free(safeStr);
 	free(unsafeStr);
@@ -160,7 +160,7 @@ NAN_METHOD(Connection::EscapeIdentifier)
 	// call libpq
 	char *safeStr = PQescapeIdentifier(self->connection_, unsafeStr, strlen(unsafeStr));
 	
-	Handle<String> response = String::New(safeStr);
+	Handle<String> response = NanNew<String>(safeStr);
 	
 	free(safeStr);
 	free(unsafeStr);
@@ -185,7 +185,7 @@ NAN_METHOD(Connection::EscapeStringConn)
 	// call libpq
 	size_t safeStr_length = PQescapeStringConn(self->connection_, safeStr, unsafeStr, strlen(unsafeStr), &error);
 	
-	Handle<String> response = String::New(safeStr,safeStr_length);
+	Handle<String> response = NanNew<String>(safeStr,safeStr_length);
 	
 	free(safeStr);
 	free(unsafeStr);
@@ -209,12 +209,12 @@ NAN_METHOD(Connection::ExecCommand)
 	PGresult *result = PQexec(self->connection_, queryText);
 	
 	// simply returns result status
-	Local<Object> response = Object::New();
+	Local<Object> response = NanNew<Object>();
 	char* status = PQresStatus(PQresultStatus(result));
-	response->Set(NanNew<String>("status"), String::New(status));
+	response->Set(NanNew<String>("status"), NanNew<String>(status));
     if( (PQresultStatus(result) != PGRES_COMMAND_OK) && (PQresultStatus(result) != PGRES_TUPLES_OK) ){
         char* errorMessage = PQresultErrorMessage(result);
-        response->Set(NanNew<String>("errorMessage"), String::New(errorMessage));
+        response->Set(NanNew<String>("errorMessage"), NanNew<String>(errorMessage));
     }
 	
 	PQclear(result);
@@ -305,9 +305,8 @@ NAN_METHOD(Connection::ExecQueryPrepared)
 	NanReturnValue(DispatchParameterizedQuery(args,true));
 }
 
-Handle<Value> Connection::DispatchParameterizedQuery(_NAN_METHOD_ARGS, bool isPrepared)
+Handle<Array> Connection::DispatchParameterizedQuery(_NAN_METHOD_ARGS, bool isPrepared)
 {
-	NanScope();
 	Connection *self = ObjectWrap::Unwrap<Connection>(args.This());
 	
 	String::Utf8Value queryName(args[0]);
@@ -350,8 +349,7 @@ Handle<Value> Connection::DispatchParameterizedQuery(_NAN_METHOD_ARGS, bool isPr
 	PQclear(result);
 	free(queryText);
 	
-	return scope.Close(response);
-	//return response;
+	return response;
 }
 
 
@@ -387,36 +385,34 @@ void Connection::Disconnect()
 //maps the postgres tuple results to v8 objects
 Handle<Array> Connection::HandleTuplesResult(const PGresult* result)
 {
-	NanScope();
 	int rowCount = PQntuples(result);
-	Local<Array> rows = Array::New();
+	Local<Array> rows = NanNew<Array>();
 	for(int rowNumber = 0; rowNumber < rowCount; rowNumber++) {
 		//create result object for this row
-		Local<Array> row = Array::New();
+		Local<Array> row = NanNew<Array>();
 		int fieldCount = PQnfields(result);
 		for(int fieldNumber = 0; fieldNumber < fieldCount; fieldNumber++) {
-			Local<Object> field = Object::New();
+			Local<Object> field = NanNew<Object>();
 			//name of field
 			char* fieldName = PQfname(result, fieldNumber);
-			field->Set(NanNew<String>("name"), String::New(fieldName));
+			field->Set(NanNew<String>("name"), NanNew<String>(fieldName));
 			
 			//oid of type of field
 			int fieldType = PQftype(result, fieldNumber);
-			field->Set(NanNew<String>("type"), Integer::New(fieldType));
+			field->Set(NanNew<String>("type"), NanNew<Integer>(fieldType));
 			
 			//value of field
 			if(PQgetisnull(result, rowNumber, fieldNumber)) {
-				field->Set(NanNew<String>("value"), Null());
+				field->Set(NanNew<String>("value"), NanNull());
 			} else {
 				char* fieldValue = PQgetvalue(result, rowNumber, fieldNumber);
-				field->Set(NanNew<String>("value"), String::New(fieldValue));
+				field->Set(NanNew<String>("value"), NanNew<String>(fieldValue));
 			}
-			row->Set(Integer::New(fieldNumber), field);
+			row->Set(NanNew<Integer>(fieldNumber), field);
 		}
-		rows->Set(Integer::New(rowNumber),row);
+		rows->Set(NanNew<Integer>(rowNumber),row);
 	}
-	return scope.Close(rows);
-	//return rows;
+	return rows;
 }
 
 //Converts a v8 array to an array of cstrings

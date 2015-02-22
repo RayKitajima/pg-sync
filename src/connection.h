@@ -43,7 +43,7 @@ protected:
 	static NAN_METHOD(ExecPrepare);
 	static NAN_METHOD(ExecQueryPrepared);
 	
-	static Handle<Value> DispatchParameterizedQuery(_NAN_METHOD_ARGS, bool isPrepared);
+	static Handle<Array> DispatchParameterizedQuery(_NAN_METHOD_ARGS, bool isPrepared);
 	static Handle<Array> HandleTuplesResult(const PGresult* result);
 	
 	static char** ArgToCStringArray(Local<Array> params);
